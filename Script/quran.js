@@ -1,7 +1,7 @@
         const readers = [
-            {id: "maher", name: "ماهر المعيقلي"},
-            {id: "hudhaify", name: "علي الحذيفي"},
-            {id: "minshawi", name: "محمد صديق المنشاوي"}
+            {id: "maher", name: "ماهر المعيقلي", audio: "https://cdn.mp3quran.net/audio/maher-muaiqly/r1/"},
+            {id: "hudhaify", name: "علي الحذيفي", audio: "https://cdn.mp3quran.net/audio/ali-hudhaifi/r1/"},
+            {id: "minshawi", name: "محمد صديق المنشاوي", audio: "https://cdn.mp3quran.net/audio/muhammad-minshawi/r1/"}
         ];
 
         let audio = null;
@@ -223,7 +223,7 @@
             document.querySelector('.pause-btn').style.display = 'flex';
             document.querySelector('.progress-bar').style.width = '0%';
             
-            const audioPath = `audio/${currentReader.id}/${currentSurah.toString().padStart(3, '0')}.mp3`;
+            const audioPath = `${currentReader.audio}${currentSurah.toString().padStart(3, '0')}.mp3`;
             
             audio = new Audio();
             audio.preload = 'metadata';
@@ -343,7 +343,7 @@
             document.querySelector('.pause-btn').style.display = 'none';
             document.querySelector('.pause-btn').innerHTML = `<i class="fas fa-pause"></i> إيقاف`;
             
-            showNotification('تعذر تحميل التلاوة! يرجى التأكد من وجود ملفات الصوت.', 'error');
+            showNotification('تعذر تحميل التلاوة. تحقق من الاتصال بالإنترنت ثم أعد المحاولة.', 'error');
         }
 
         function performSearch() {
