@@ -95,19 +95,19 @@
                 
                 const parts = ['<div class="ayahs-container">'];
                 
-                if (Number(surahNumber) !== 9) {
-                    parts.push('<div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>');
+                if (Number(surahNumber) !== 1 && Number(surahNumber) !== 9) {
+                    parts.push('<div class="bismillah">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ</div>');
                 }
                 
                 ayahs.forEach(ayah => {
                     let ayahText = ayah.text;
                     
                     if (ayah.numberInSurah === 1 && Number(surahNumber) !== 1 && Number(surahNumber) !== 9) {
-                        ayahText = ayahText.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', '').trim();
+                        ayahText = stripBismillah(ayahText);
                     }
                     
                     parts.push(
-                        `<span class="ayah" data-ayah="${ayah.numberInSurah}" data-surah="${surahNumber}">${ayahText}<span class="ayah-number">${ayah.numberInSurah}</span></span>`
+                        `<span class="ayah" data-ayah="${ayah.numberInSurah}" data-surah="${surahNumber}"><span class="ayah-text">${ayahText}</span><span class="ayah-number">${ayah.numberInSurah}</span></span> `
                     );
                 });
                 
@@ -120,6 +120,30 @@
                 quranText.innerHTML = '<div class="error-message">حدث خطأ أثناء تحميل السورة. يرجى المحاولة لاحقًا.</div>';
                 console.error('Error loading surah:', error);
             }
+        }
+
+        function stripBismillah(text) {
+            const marks = /[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/;
+            const target = 'بسماللهالرحمنالرحيم';
+            const forms = { 'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ى': 'ي', 'ی': 'ي' };
+            let index = 0;
+            let matched = 0;
+
+            while (index < text.length && matched < target.length) {
+                const char = text[index];
+                if (marks.test(char) || char === ' ') {
+                    index += 1;
+                    continue;
+                }
+                const normalized = forms[char] || char;
+                if (normalized !== target[matched]) return text;
+                matched += 1;
+                index += 1;
+            }
+
+            if (matched !== target.length) return text;
+            while (index < text.length && (marks.test(text[index]) || text[index] === ' ')) index += 1;
+            return text.slice(index).trim();
         }
 
         function generateAyahTimings(totalAyahs) {
